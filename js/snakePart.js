@@ -7,6 +7,8 @@ export class SnakePart extends Base {
         this.strokeColor = strokeColor;
     };
 
+    update() {
+    }
     draw() {
         engine.fillRect(this.x, this.y, this.width, this.height, this.color);
         engine.strokeRect(this.x, this.y, this.width, this.height, this.strokeColor);

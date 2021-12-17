@@ -2,76 +2,82 @@ import { Base } from "./base.js";
 import { SnakePart } from "./snakePart.js";
 
 export class Snake extends Base {
-    constructor(x, y, width, height, eat) {
+    constructor(x, y, width, height) {
         super(x, y, width, height,);
-        this.speed = 16;
-        this.speedX = this.speed;
-        this.speedY = this.speed;
-        this.eat = eat;
-        this.pressedKey = "";
         this.snakeParts = new Array();
         for (let i = 0; i < 5; i++) {
             let color = "green";
             if (i == 0) {
                 color = "red";
             };
-            this.snakeParts.push(new SnakePart(this.x - this.width * i, this.y, this.height, this.width, color, " black"));
+            this.snakeParts.push(new SnakePart(this.x - this.width * i, this.y, this.width, this.height, color, "black"));
         };
-
         this.direction = Directions.Right;
+        this.lastTime = Date.now();
+        this.frameTime = 60;
     };
 
-    update(gameTime) {
-        for (let i = this.snakeParts.length - 1; i >= 0; i--) {
-            let part = this.snakeParts[i];
-            if (i == 0) {
-                if (part.x <= -this.width) {
-                    part.x = engine.width;
-                };
-                if (part.x > engine.width) {
-                    part.x = -this.width;
-                };
-                if (part.y >= engine.height) {
-                    part.y = 0;
-                }
-                if (part.y < 0) {
-                    part.y = engine.height
-                }
-            } else {
-                var previousPart = this.snakeParts[i - 1];
-                part.x = previousPart.x;
-                part.y = previousPart.y;
-            };
-            // part.update();
-        };
 
-        if (this.pressedKey === "ArrowRight" && this.direction !== Directions.Left) {
+    update(gameTime) {
+
+        if (engine.Keys[Directions.Right] && this.direction !== Directions.Left) {
             this.direction = Directions.Right;
-        } else if (this.pressedKey == "ArrowLeft" && this.direction !== Directions.Right) {
+        } else if (engine.Keys[Directions.Left] && this.direction !== Directions.Right) {
             this.direction = Directions.Left;
-        } else if (this.pressedKey == "ArrowUp" && this.direction !== Directions.Down) {
+        } else if (engine.Keys[Directions.Up] && this.direction !== Directions.Down) {
             this.direction = Directions.Up;
 
-        } else if (this.pressedKey == "ArrowDown" && this.direction !== Directions.Up) {
+        } else if (engine.Keys[Directions.Down] && this.direction !== Directions.Up) {
             this.direction = Directions.Down;
-
         }
 
-        switch (this.direction) {
-            case Directions.Right: {
-                this.snakeParts[0].x += this.speedX;
-                break;
-            } case Directions.Left: {
-                this.snakeParts[0].x -= this.speedX;
-                break;
-            } case Directions.Up: {
-                this.snakeParts[0].y -= this.speedY;
-                break;
-            } case Directions.Down: {
-                this.snakeParts[0].y += this.speedY;
-                break;
+        var delta = Date.now() - this.lastTime;
+        var steps = Math.floor(delta / this.frameTime);
+        if (steps <= 0) return;
+        var snakeHead = this.snakeParts[0];
+
+        for (var i = 0; i < steps; i++) {
+            for (let i = this.snakeParts.length - 1; i >= 0; i--) {
+                let part = this.snakeParts[i];
+                if (i == 0) {
+                    if (part.x <= - this.width) {
+                        part.x = engine.width;
+                    };
+                    if (part.x > engine.width) {
+                        part.x = - this.width;
+                    };
+                    if (part.y >= engine.height) {
+                        part.y = 0;
+                    }
+                    if (part.y < 0) {
+                        part.y = engine.height
+                    }
+                } else {
+                    var previousPart = this.snakeParts[i - 1];
+
+                    part.x = previousPart.x;
+                    part.y = previousPart.y;
+                };
+                part.update();
+            };
+
+            switch (this.direction) {
+                case Directions.Right: {
+                    snakeHead.x += this.width;
+                    break;
+                } case Directions.Left: {
+                    snakeHead.x -= this.width;
+                    break;
+                } case Directions.Up: {
+                    snakeHead.y -= this.height;
+                    break;
+                } case Directions.Down: {
+                    snakeHead.y += this.height;
+                    break;
+                }
             }
         }
+        this.lastTime = Date.now();
     };
 
 
@@ -80,15 +86,9 @@ export class Snake extends Base {
             let part = this.snakeParts[i];
             part.draw();
         };
+        if (this.poison == true) { this.snakeParts.pop(); }
 
-        if (this.eat == true) { this.snakeParts.push(new SnakePart(this.x - this.width * this.snakeParts.lengt, this.y, this.height, this.width, "red", " black")); }
+        if (this.eat == true) { this.snakeParts.push(new SnakePart(this.x - this.width * this.snakeParts.lengt, this.y, this.height, this.width, "green", " black")); }
     };
 
-};
-
-const Directions = {
-    Up: 0,
-    Down: 1,
-    Left: 2,
-    Right: 3,
 };

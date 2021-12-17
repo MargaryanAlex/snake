@@ -6,6 +6,9 @@ export class Base {
         this.height = height;
     };
 
+    update() { }
+    draw() { }
+
     intersect(obj) {
         if (
             this.x >= obj.x && this.x < obj.x + this.width && this.y >= obj.y && this.y < obj.y + this.height && this.width == obj.width && this.height == obj.height
@@ -15,4 +18,11 @@ export class Base {
         };
         return false;
     };
+};
+
+window.Directions = {
+    Up: "ArrowUp",
+    Down: "ArrowDown",
+    Left: "ArrowLeft",
+    Right: "ArrowRight",
 };
