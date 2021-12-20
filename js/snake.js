@@ -1,20 +1,21 @@
 import { Base } from "./base.js";
 import { SnakePart } from "./snakePart.js";
 
+
 export class Snake extends Base {
     constructor(x, y, width, height) {
         super(x, y, width, height,);
         this.snakeParts = new Array();
         for (let i = 0; i < 5; i++) {
-            let color = "green";
+            let color = "#3CAEA3";
             if (i == 0) {
-                color = "red";
+                color = "#20639B";
             };
             this.snakeParts.push(new SnakePart(this.x - this.width * i, this.y, this.width, this.height, color, "black"));
         };
         this.direction = Directions.Right;
         this.lastTime = Date.now();
-        this.frameTime = 60;
+        this.frameTime = 160;
     };
 
 
@@ -79,16 +80,23 @@ export class Snake extends Base {
         }
         this.lastTime = Date.now();
     };
-
-
+    addSnakePart() {
+        this.snakeParts.push(new SnakePart(this.x - this.width * this.snakeParts.lengt, this.y, this.width, this.height, "#3CAEA3", " black"));
+        this.frameTime -= 10
+    }
+    removeSnakePart() {
+        this.snakeParts.pop()
+    }
+    stopeSnake() {
+        this.snakeParts[0].x = this.snakeParts[1].x
+        this.snakeParts[0].y = this.snakeParts[1].y
+    }
     draw() {
         for (let i = 0; i < this.snakeParts.length; i++) {
             let part = this.snakeParts[i];
             part.draw();
         };
-        if (this.poison == true) { this.snakeParts.pop(); }
 
-        if (this.eat == true) { this.snakeParts.push(new SnakePart(this.x - this.width * this.snakeParts.lengt, this.y, this.height, this.width, "green", " black")); }
     };
 
 };
